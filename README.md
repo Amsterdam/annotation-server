@@ -1,2 +1,2 @@
 # annotation-server
-Annotation tool server
+Annotation tool server prototype
