@@ -1,9 +1,24 @@
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from djchoices import DjangoChoices, ChoiceItem
 
 
+class DataSource(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+def meta_default():
+    return {}
+
+
 class Example(models.Model):
-    reference = models.CharField(max_length=48, unique=True)
+    data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
+    reference = models.CharField(max_length=64, unique=True)
+
+    meta = JSONField(default=meta_default)
 
     def __str__(self):
         return self.reference

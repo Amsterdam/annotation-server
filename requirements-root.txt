@@ -1,2 +1,7 @@
 Django
 django-choices
+
+raccoon # Fast pandas dataframe like appends
+pandas
+
+psycopg2
