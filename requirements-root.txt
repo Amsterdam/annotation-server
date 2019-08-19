@@ -9,3 +9,7 @@ raccoon # Fast pandas dataframe like appends
 pandas
 
 psycopg2
+
+# Development packages
+django-cors-headers
+django_debug_toolbar
