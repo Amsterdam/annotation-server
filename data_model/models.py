@@ -1,6 +1,7 @@
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
+from annotation_server import settings
 
 
 class DataSource(models.Model):
@@ -26,12 +27,15 @@ class Example(models.Model):
 
 
 class StringTag(models.Model):
-    example = models.ForeignKey(Example, on_delete=models.CASCADE, related_name='tags')
+    # example = models.ForeignKey(Example, on_delete=models.CASCADE, related_name='tags')
     key = models.CharField(max_length=64)
     value = models.CharField(max_length=128)
 
-    class Meta:
-        unique_together = ['example', 'key']
+    def __str__(self):
+        return f'{self.key}: {self.value}'
+
+    # class Meta:
+    #     unique_together = ['example', 'key']
 
 
 class Feature(models.Model):
@@ -51,8 +55,10 @@ class TextFeature(Feature):
 
 class Annotation(models.Model):
     example = models.ForeignKey(Example, on_delete=models.CASCADE)
+    tag = models.ForeignKey(StringTag, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'annotation {self.example}, label(s): {self.label_set.all()}'
+        return f'annotation {self.example}: {self.tag}'
 
 

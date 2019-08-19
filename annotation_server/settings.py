@@ -40,9 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_extensions',
+    'django_filters',  # REST api filtering
+    'crispy_forms',  # Filter fields in html REST api
 
     # Project specific apps
     'data_model.apps.DataModelConfig',
+    'user_model',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +132,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+AUTH_USER_MODEL = 'user_model.AnnotationUser'
 
 #
 # Django rest framework config
@@ -138,5 +142,7 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }

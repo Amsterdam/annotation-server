@@ -3,14 +3,18 @@ from django.contrib import admin
 from . import models
 
 
-class StringTagInline(admin.TabularInline):
-    model = models.StringTag
+# class StringTagInline(admin.TabularInline):
+#     model = models.StringTag
+
+
+class AnnotationInline(admin.TabularInline):
+    model = models.Annotation
 
 
 class ExampleAdmin(admin.ModelAdmin):
     list_display = ('reference', 'data_source', 'description')
     inlines = [
-        StringTagInline
+        AnnotationInline
     ]
 
 
