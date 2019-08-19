@@ -9,6 +9,11 @@ from . import models
 
 class AnnotationInline(admin.TabularInline):
     model = models.Annotation
+    # fields = ['tag', 'author']
+    # readonly_fields = ['created_at', 'modified_at']
+
+    def get_queryset(self, request):
+        return self.model.latest.get_queryset()
 
 
 class ExampleAdmin(admin.ModelAdmin):

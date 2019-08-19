@@ -17,3 +17,12 @@ class ExampleSerializer(HALSerializer):
     class Meta(object):
         model = models.Example
         fields = '__all__'
+
+
+class ExampleDetailSerializer(HALSerializer):
+    data_source = serializers.ReadOnlyField(source='name')
+
+
+    class Meta(object):
+        model = models.Example
+        fields = '__all__'

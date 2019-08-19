@@ -20,6 +20,11 @@ class Example(models.Model):
     reference = models.CharField(max_length=64, unique=True)
     description = models.CharField(max_length=64)
 
+    tags = models.ManyToManyField('StringTag', through='Annotation')
+
+    # Note, to get the latest annotations per key, the following query works:
+    # `myExample.annotation_set(manager='latest').all()`
+
     # meta = JSONField(default=meta_default)
 
     def __str__(self):
@@ -53,12 +58,25 @@ class TextFeature(Feature):
         return self.body[:80]
 
 
+# Latest annotations
+class LatestAnnotationManager(models.Manager):
+    def get_queryset(self):
+        return super(LatestAnnotationManager, self)\
+            .get_queryset()\
+            .filter()\
+            .order_by('tag__key', '-modified_at')\
+            .distinct('tag__key')
+
+
 class Annotation(models.Model):
-    example = models.ForeignKey(Example, on_delete=models.CASCADE)
+    example = models.ForeignKey(Example, on_delete=models.CASCADE, )
     tag = models.ForeignKey(StringTag, on_delete=models.CASCADE)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()  # The default manager.
+    latest = LatestAnnotationManager()  # The EmployeeManager manager.
 
     def __str__(self):
         return f'annotation {self.example}: {self.tag}'
-
-
