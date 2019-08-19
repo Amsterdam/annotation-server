@@ -13,7 +13,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "annotation_server.settings")
 django.setup()
 
 # Django specific imports
-from data_model.models import Example, TextFeature, TextLabel, MultiLabelChoice, Annotation, DataSource, ImageFeature
+from data_model.models import Example, TextFeature, Annotation, DataSource, ImageFeature, \
+    StringTag
 
 # Django model dependent imports
 from import_lib.stadsarchief.bwt_xml import parse_xml
@@ -62,6 +63,13 @@ def main():
         image = ImageFeature(remote_url=url)
         image.example = example
         image.save()
+
+        StringTag.objects.create(key='stadsdeel_code', value=row['stadsdeel_code'], example=example)
+        StringTag.objects.create(key='dossier_nummer', value=row['dossier_nummer'], example=example)
+        StringTag.objects.create(key='subdossier', value=row['subdossier'], example=example)
+        StringTag.objects.create(key='barcode', value=row['barcode'], example=example)
+        StringTag.objects.create(key='scan_nr', value=row['scan_nr'], example=example)
+        StringTag.objects.create(key='file_name', value=row['file_name'], example=example)
 
 
 if __name__ == "__main__":

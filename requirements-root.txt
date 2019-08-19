@@ -1,5 +1,9 @@
 Django
 django-choices
+djangorestframework
+django-filter
+drf-amsterdam
+django-extensions
 
 raccoon # Fast pandas dataframe like appends
 pandas

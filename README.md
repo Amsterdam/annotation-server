@@ -1,6 +1,9 @@
 # annotation-server
 Annotation tool server prototype
 
+## Class diagram
+![Model class diagram](doc/class_diagram.png?raw=true "Model class diagram")
+
 ## Imports
 
 Run all import from the project root:

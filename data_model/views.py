@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from datapunt_api.rest import DatapuntViewSet
 
-# Create your views here.
+from data_model import models, serializers
+
+
+class ExampleViewSet(DatapuntViewSet):
+    queryset = models.Example.objects.all()
+    serializer_class = serializers.ExampleSerializer
+    serializer_detail_class = serializers.ExampleSerializer
