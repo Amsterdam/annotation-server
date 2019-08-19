@@ -17,6 +17,7 @@ def meta_default():
 class Example(models.Model):
     data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
     reference = models.CharField(max_length=64, unique=True)
+    description = models.CharField(max_length=64)
 
     meta = JSONField(default=meta_default)
 

@@ -63,4 +63,4 @@ venv.bak/
 
 
 # Project specific
-/import
+data/
