@@ -22,13 +22,22 @@ class Example(models.Model):
 
     tags = models.ManyToManyField('StringTag', through='Annotation')
 
-    # Note, to get the latest annotations per key, the following query works:
-    # `myExample.annotation_set(manager='latest').all()`
-
-    # meta = JSONField(default=meta_default)
+    # Note, to get the latest tags per key, the following query works:
+    # `myExample.tags(manager='latest').all()`
+    # To get the default use:
+    # `myExample.tags(manager='objects').all()`
 
     def __str__(self):
         return self.reference
+
+
+class LatestTagManager(models.Manager):
+    def get_queryset(self):
+        return super(LatestTagManager, self) \
+            .get_queryset() \
+            .filter() \
+            .order_by('key', '-annotation__modified_at') \
+            .distinct('key')
 
 
 class StringTag(models.Model):
@@ -36,11 +45,12 @@ class StringTag(models.Model):
     key = models.CharField(max_length=64)
     value = models.CharField(max_length=128)
 
+    # Managers
+    objects = models.Manager()  # The default manager.
+    latest = LatestTagManager()
+
     def __str__(self):
         return f'{self.key}: {self.value}'
-
-    # class Meta:
-    #     unique_together = ['example', 'key']
 
 
 class Feature(models.Model):
@@ -69,14 +79,18 @@ class LatestAnnotationManager(models.Manager):
 
 
 class Annotation(models.Model):
-    example = models.ForeignKey(Example, on_delete=models.CASCADE, )
+    example = models.ForeignKey(Example, on_delete=models.CASCADE, related_name='annotations')
     tag = models.ForeignKey(StringTag, on_delete=models.CASCADE)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    # Managers
     objects = models.Manager()  # The default manager.
     latest = LatestAnnotationManager()  # The EmployeeManager manager.
 
     def __str__(self):
         return f'annotation {self.example}: {self.tag}'
+
+    class Admin:
+        manager = 'objects'
