@@ -28,7 +28,7 @@ def parse_xml(xml_path):
 
     df = raccoon.DataFrame(columns=columns)
 
-    max_dossiers = 2
+    max_dossiers = 20
     dossier_els = root.findall('dossier')
     log.info(f'number of dossier(s): {len(dossier_els)}')
 
