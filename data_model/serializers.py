@@ -2,6 +2,7 @@ from datapunt_api.serializers import HALSerializer
 from rest_framework import serializers
 
 from data_model import models
+from user_model.serializers import AnnotationUserSerializer
 
 
 class StringTagSerializer(serializers.ModelSerializer):
@@ -12,6 +13,7 @@ class StringTagSerializer(serializers.ModelSerializer):
 
 class AnnotationSerializer(serializers.ModelSerializer):
     tag = StringTagSerializer(read_only=True)
+    author = AnnotationUserSerializer(read_only=True)
 
     class Meta:
         model = models.Annotation
@@ -37,11 +39,17 @@ class ExampleDetailSerializer(HALSerializer):
     data_source = serializers.ReadOnlyField(source='name')
     tags = StringTagSerializer(many=True, read_only=True)
     latest_tags = serializers.SerializerMethodField('get_latest_tags')
-    annotations = AnnotationSerializer(read_only=True, many=True)
+    # annotations = AnnotationSerializer(read_only=True, many=True)
+    annotations = serializers.SerializerMethodField('get_annotations')
 
     def get_latest_tags(self, example):
         items = example.tags(manager='latest').all()
         serializer = StringTagSerializer(instance=items, many=True, read_only=True)
+        return serializer.data
+
+    def get_annotations(self, example):
+        items = example.annotations.order_by('-modified_at')
+        serializer = AnnotationSerializer(instance=items, many=True, read_only=True)
         return serializer.data
 
     class Meta(object):
