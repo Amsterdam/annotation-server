@@ -21,9 +21,9 @@ class AnnotationSerializer(serializers.ModelSerializer):
 
 
 class ExampleListSerializer(HALSerializer):
-    tags = StringTagSerializer(many=True, read_only=True)
+    # tags = StringTagSerializer(many=True, read_only=True)
     latest_tags = serializers.SerializerMethodField('get_latest_tags')
-    annotations = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    # annotations = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
 
     def get_latest_tags(self, example):
         items = example.tags(manager='latest').all()
@@ -32,7 +32,7 @@ class ExampleListSerializer(HALSerializer):
 
     class Meta(object):
         model = models.Example
-        fields = ['id', 'reference', '_links', 'tags', 'latest_tags', 'annotations']
+        fields = ['id', 'reference', '_links', 'latest_tags']
 
 
 class ExampleDetailSerializer(HALSerializer):

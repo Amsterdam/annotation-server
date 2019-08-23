@@ -11,6 +11,4 @@ class ExampleViewSet(DatapuntViewSet):
     serializer_detail_class = serializers.ExampleDetailSerializer
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['reference', 'description', 'tags']
-    filterset_fields = ['reference', 'description', 'tags__key']
-    filterset_fields = ['reference', 'description', 'tags__value']
+    filterset_fields = ['reference', 'description', 'tags__key', 'tags__value', 'annotations__author__username']

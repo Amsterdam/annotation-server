@@ -39,6 +39,14 @@ def load_labels(label_dir):
     for path in file_paths_sorted:
         data = load_yaml(path)
 
+        label = data.get('type')
+
+        if label == None:
+            continue
+
+        if label == 'unknown':
+            continue
+
         row_data = {
             'file_name': data.get('reference'),
             'label': data.get('type'),
