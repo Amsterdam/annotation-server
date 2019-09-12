@@ -19,13 +19,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_to!)a1)6nqabj7*ek5h@p_mkief3q-)ilk3yb@gd^w7=8kryv'
+insecure_key = 'insecure'
+SECRET_KEY = os.getenv('SECRET_KEY', insecure_key)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = SECRET_KEY == insecure_key
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_extensions',
+    'django_filters',  # REST api filtering
+    'crispy_forms',  # Filter fields in html REST api
+
+    # Project specific apps
+    'data_model.apps.DataModelConfig',
+    'user_model',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +57,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if DEBUG:
+    INSTALLED_APPS += (
+        'debug_toolbar',
+        'corsheaders',
+    )
+    MIDDLEWARE += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
+
+    insert_idx = MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')
+    MIDDLEWARE.insert(insert_idx, 'corsheaders.middleware.CorsMiddleware')
+
+    CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'annotation_server.urls'
 
@@ -75,8 +98,12 @@ WSGI_APPLICATION = 'annotation_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME', 'annotation-server'),
+        'USER': os.getenv('DATABASE_USER', 'annotation-server'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'insecure'),
+        'HOST': '127.0.0.1',
+        'PORT': '5408',
     }
 }
 
@@ -118,3 +145,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'user_model.AnnotationUser'
+
+#
+# Django rest framework config
+#
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}

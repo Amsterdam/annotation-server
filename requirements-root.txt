@@ -1,1 +1,16 @@
 Django
+django-choices
+djangorestframework
+django-filter
+drf-amsterdam
+django-extensions
+
+raccoon # Fast pandas dataframe like appends
+pandas
+PyYaml
+
+psycopg2
+
+# Development packages
+django-cors-headers
+django_debug_toolbar

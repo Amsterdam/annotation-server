@@ -1,0 +1,10 @@
+version: "3.0"
+services:
+  database:
+    image: amsterdam/postgres11
+    ports:
+      - "5408:5432"
+    environment:
+      POSTGRES_DB: annotation-server
+      POSTGRES_USER: annotation-server
+      POSTGRES_PASSWORD: insecure
